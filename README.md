@@ -1,6 +1,8 @@
-# BrainSync Auditor
+# Misstery
 
-BrainSync Auditor is now structured as a small full-stack app:
+Misstery is an AI-powered verification service that helps users catch missed information, hidden gaps, and overlooked context before those misses turn into mistakes.
+
+Misstery is structured as a small full-stack app:
 
 - `frontend/`: React + Vite UI
 - `api/`: FastAPI backend for transcription and workflow execution
@@ -16,8 +18,31 @@ The application now follows a strict 3-step workflow:
    Paste transcript text, record audio in the browser, or upload a text/audio file.
 2. `Execute workflow`
    The transcript is sent to the FastAPI backend, which calls Dify and returns quiz data.
-3. `Interactive quiz card view`
-   The frontend renders one quiz at a time with answer selection, reveal, and navigation.
+3. `Interactive quiz and review`
+   The frontend renders one quiz at a time with answer selection, reveal, navigation, and a final review stage with expandable feedback cards.
+
+## Current UX
+
+The current frontend includes:
+
+- input stage for text, audio upload, and live recording
+- explicit workflow loading state while the Dify response is pending
+- interactive quiz cards with answer reveal
+- final overview screen showing:
+  - correct, wrong, answered, and unanswered totals
+  - overall feedback on alignment risk
+  - a checklist for what to remember next time
+  - expandable review cards per question
+
+Each review card shows:
+
+- your answer
+- correct answer
+- why it matters
+- feedback
+- what to remember next time
+- communication risk
+- revisit-card action
 
 ## Stack
 
@@ -27,6 +52,23 @@ The application now follows a strict 3-step workflow:
 - OpenAI Whisper transcription
 - Dify workflow execution
 - Cognee ingestion scripts for knowledge preparation
+- React-based quiz review and post-quiz coaching
+
+## Planned Cognee Integration
+
+The next backend iteration is to connect the quiz feedback stage directly to Cognee through REST APIs instead of the Python SDK.
+
+Target direction:
+
+- ingest new meeting context into Cognee through REST
+- trigger graph updates through REST
+- query relevant policy context during the quiz feedback session
+- show supporting evidence and memory guidance in the final review screen
+
+Intended use:
+
+- Dify generates the quiz structure
+- Cognee provides relevant context, policy grounding, and explanation support
 
 ## Project Structure
 
@@ -36,6 +78,8 @@ The application now follows a strict 3-step workflow:
 - `app.py`: Previous Streamlit prototype
 - `ingest_data.py`: Cognee SDK ingestion script
 - `ingest_rest.py`: Cognee REST ingestion script
+- `test_conversation.md`: Demo transcripts and expected outcomes
+- `PRESENTATION.md`: Presentation script and slide outline
 
 ## Environment Variables
 
@@ -55,7 +99,7 @@ Notes:
 
 - `DIFY_URL` defaults to `https://api.dify.ai/v1`.
 - `WORKFLOW_ID` is still present in local config, though the current request uses `/workflows/run`.
-- `COGNEE_API_KEY` and `BASE_URL` are only required for the ingestion/search helper scripts.
+- `COGNEE_API_KEY` and `BASE_URL` are currently used by the ingestion/search helper scripts and are intended to be reused for the REST-based quiz feedback integration.
 
 ## Install
 
@@ -111,6 +155,43 @@ Using the REST ingestion flow:
 poetry run python ingest_rest.py
 ```
 
+## Demo Assets
+
+For presentation and demo preparation:
+
+- `test_conversation.md` contains multiple meeting scenarios with:
+  - transcript
+  - actual result
+  - expected result
+  - what Misstery should flag
+- `PRESENTATION.md` contains a presentation-ready explanation of the service, architecture, workflow, and demo flow
+- `slides/slides.md` is a Slidev deck for presenting to an audience in the browser
+
+## Presentation Deck
+
+The repo includes a Slidev presentation so you can present directly from Markdown.
+
+Install slide dependencies:
+
+```bash
+cd slides
+npm install
+```
+
+Run the presentation locally:
+
+```bash
+cd slides
+npm run dev
+```
+
+Build static presentation assets:
+
+```bash
+cd slides
+npm run build
+```
+
 ## Status
 
-The Streamlit prototype is retained in the repo as the older version, but the intended path is now the React + FastAPI application.
+The Streamlit prototype is retained in the repo as the older version, but the intended path is now the React + FastAPI application with Cognee REST-backed feedback in the post-quiz review stage.

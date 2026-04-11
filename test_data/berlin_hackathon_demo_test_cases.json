@@ -1,0 +1,233 @@
+{
+  "title": "BrainSync Auditor Demo Test Cases",
+  "domain": "2026 Berlin Hackathon Meta Demo",
+  "rules": [
+    {
+      "id": "rule_team_size",
+      "rule": "Team Size",
+      "value": "Max 4 members"
+    },
+    {
+      "id": "rule_open_source",
+      "rule": "Open Source",
+      "value": "Must be MIT License. Private repos not allowed"
+    },
+    {
+      "id": "rule_presentation",
+      "rule": "Presentation",
+      "value": "Strictly 5 minutes total"
+    },
+    {
+      "id": "rule_tech_stack",
+      "rule": "Tech Stack",
+      "value": "Must use Cognee (Knowledge Graph) and Dify (Workflow)"
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_name": "Hidden Fifth Member And Scope Creep",
+      "meeting_transcript": [
+        {
+          "speaker": "Dokeun",
+          "text": "We already have four registered members, but I want to bring in my designer friend to help finish the demo screens and join us on stage."
+        },
+        {
+          "speaker": "Marcus",
+          "text": "That should be fine as long as we do not list them officially in the repo."
+        },
+        {
+          "speaker": "User",
+          "text": "Right, if they are not on paper it should not matter. We need the extra help."
+        },
+        {
+          "speaker": "Dokeun",
+          "text": "Good. Then all five of us will prepare the final demo together."
+        }
+      ],
+      "expected_conflict": {
+        "summary": "The team is informally approving a fifth member, which violates the maximum team size rule.",
+        "flags": [
+          "Team exceeds the allowed maximum of 4 members",
+          "User gave a weak approval based on convenience instead of the rule",
+          "The team is trying to bypass the official rule by hiding a contributor"
+        ]
+      },
+      "knowledge_reference": {
+        "rule_id": "rule_team_size",
+        "rule_name": "Team Size",
+        "rule_text": "Max 4 members"
+      }
+    },
+    {
+      "scenario_name": "Private Repo And Wrong License Shortcut",
+      "meeting_transcript": [
+        {
+          "speaker": "Marcus",
+          "text": "I want to keep the repository private until after judging. We can open it later if we win."
+        },
+        {
+          "speaker": "Dokeun",
+          "text": "Yes, and for the license we can just say Apache in the README for now and clean it up after the event."
+        },
+        {
+          "speaker": "User",
+          "text": "That sounds okay. Private first, license later."
+        },
+        {
+          "speaker": "Marcus",
+          "text": "Perfect. That keeps the code hidden and buys us time."
+        }
+      ],
+      "expected_conflict": {
+        "summary": "The team is violating both the open-source requirement and the MIT license requirement.",
+        "flags": [
+          "Private repository is not allowed",
+          "License must be MIT, not Apache or undecided",
+          "User approved a shortcut that directly conflicts with hackathon submission rules"
+        ]
+      },
+      "knowledge_reference": {
+        "rule_id": "rule_open_source",
+        "rule_name": "Open Source",
+        "rule_text": "Must be MIT License. Private repos not allowed"
+      }
+    },
+    {
+      "scenario_name": "Overtime Demo With Missing Required Stack",
+      "meeting_transcript": [
+        {
+          "speaker": "Dokeun",
+          "text": "Our product story is too complex for five minutes, so let us plan for an eight-minute presentation and hope the judges allow it."
+        },
+        {
+          "speaker": "Marcus",
+          "text": "Also, integrating Cognee is taking too long. We can just show Dify and say Cognee is on the roadmap."
+        },
+        {
+          "speaker": "User",
+          "text": "Yes, that is probably fine. The main thing is showing something polished."
+        },
+        {
+          "speaker": "Dokeun",
+          "text": "Agreed. We will run a longer presentation and skip Cognee in the live build."
+        }
+      ],
+      "expected_conflict": {
+        "summary": "The team is planning to break the presentation time limit and remove a mandatory technology requirement.",
+        "flags": [
+          "Presentation exceeds the strict 5-minute total limit",
+          "Cognee is mandatory and cannot be replaced with a roadmap statement",
+          "Required stack must include both Cognee and Dify",
+          "User approved a demo plan that is non-compliant on both format and technology requirements"
+        ]
+      },
+      "knowledge_reference": [
+        {
+          "rule_id": "rule_presentation",
+          "rule_name": "Presentation",
+          "rule_text": "Strictly 5 minutes total"
+        },
+        {
+          "rule_id": "rule_tech_stack",
+          "rule_name": "Tech Stack",
+          "rule_text": "Must use Cognee (Knowledge Graph) and Dify (Workflow)"
+        }
+      ]
+    },
+    {
+      "scenario_name": "Presenter Adds Unverified Project Claims",
+      "meeting_transcript": [
+        {
+          "speaker": "Dokeun",
+          "text": "Let me explain the project for the final presentation. BrainSync Auditor helps teams verify whether they really understood high-stakes meeting decisions."
+        },
+        {
+          "speaker": "Dokeun",
+          "text": "The Luma page covers the event basics, but I am also going to say that judges already allow private repositories for finalist teams and that teams can go beyond five minutes if the demo is strong."
+        },
+        {
+          "speaker": "Marcus",
+          "text": "That sounds useful. If you say it confidently, people will assume it is official."
+        },
+        {
+          "speaker": "User",
+          "text": "Okay, then we can present those extra points as part of the hackathon rules."
+        }
+      ],
+      "expected_conflict": {
+        "summary": "The presenter is introducing extra claims that are not confirmed by the official event page and the team is treating them as if they were official rules.",
+        "flags": [
+          "Presenter added unverified information beyond the official event page",
+          "Team is treating unsupported claims as official policy",
+          "User approved presentation content that should be validated against a trusted source first",
+          "This creates public-facing misinformation risk during the demo"
+        ]
+      },
+      "knowledge_reference": [
+        {
+          "rule_id": "official_event_page",
+          "rule_name": "Official Event Page",
+          "rule_text": "Only information explicitly stated on the official event page should be presented as official."
+        },
+        {
+          "rule_id": "verified_source_page",
+          "rule_name": "Verified Source Page",
+          "rule_text": "Additional claims must be checked against the verified source before being repeated in the presentation.",
+          "source_url": "https://correct.source.com/berlin-hackathon-rules"
+        }
+      ]
+    },
+    {
+      "scenario_name": "Presenter Summary Drift",
+      "meeting_transcript": [
+        {
+          "speaker": "Dokeun",
+          "text": "Let me summarize the final demo plan clearly. We have exactly 5 minutes, so the structure is 1 minute for the problem, 2 minutes for the live product flow, 1 minute for the quiz feedback review, and 1 minute for the closing."
+        },
+        {
+          "speaker": "Marcus",
+          "text": "Got it. And we must explicitly show both Cognee and Dify in the live demo, right?"
+        },
+        {
+          "speaker": "Dokeun",
+          "text": "Yes. That is mandatory. If we skip either one, the demo is incomplete. Also, the repo must stay public under MIT before submission."
+        },
+        {
+          "speaker": "User",
+          "text": "Yeah yeah, I got the gist."
+        },
+        {
+          "speaker": "User",
+          "text": "So we have around 8 minutes total, and if time gets tight we can skip the Cognee part and just talk about it. The main thing is the UI."
+        }
+      ],
+      "expected_conflict": {
+        "summary": "The presenter explained the correct plan, but the user retained a vague and incorrect version of it, creating memory drift before the demo.",
+        "flags": [
+          "User recall does not match the presenter's actual summary",
+          "User misremembered the strict 5-minute presentation limit",
+          "User misremembered the mandatory Cognee and Dify stack requirement",
+          "The team is at risk of acting on vague memory instead of the clearly stated plan",
+          "This is a strong case for using a quiz right after the meeting to verify what was actually retained"
+        ]
+      },
+      "knowledge_reference": [
+        {
+          "rule_id": "rule_presentation",
+          "rule_name": "Presentation",
+          "rule_text": "Strictly 5 minutes total"
+        },
+        {
+          "rule_id": "rule_tech_stack",
+          "rule_name": "Tech Stack",
+          "rule_text": "Must use Cognee (Knowledge Graph) and Dify (Workflow)"
+        },
+        {
+          "rule_id": "rule_open_source",
+          "rule_name": "Open Source",
+          "rule_text": "Must be MIT License. Private repos not allowed"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+Marcus: Hey team, we only have 2 hours left. I just found a great designer who can join us right now and fix our UI. That makes us a 5-person team, but the UI will look amazing!
+
+User: Sounds good! We need a better UI to win. Let's add them to our GitHub team immediately.
+
+Dokeun: Also, I'm worried about other teams stealing our code. Let's change our repository to private for the next few hours. We can make it public again after the winners are announced.
+
+User: Okay, I agree. Safety first. Let's keep it private for now.
+
+Marcus: By the way, I heard from someone in the hallway that the judges are giving 10 minutes for the demo if the project is high-quality. Let's prepare a longer presentation.
+
+Dokeun: Silent. Typing code.
+
+User: Silent. Checking the design.
