@@ -261,41 +261,40 @@ with theme_cols[1]:
     )
 
 theme = THEMES[st.session_state["color_mode"]]
-st.markdown(
-    f"""
+theme_css = """
     <style>
         :root {
-            --surface: {theme["surface"]};
-            --surface-strong: {theme["surface_strong"]};
-            --line: {theme["line"]};
-            --text: {theme["text"]};
-            --muted: {theme["muted"]};
-            --accent: {theme["accent"]};
-            --accent-deep: {theme["accent_deep"]};
-            --olive: {theme["olive"]};
-            --gold: {theme["gold"]};
-            --pill-border: {theme["pill_border"]};
-            --pill-bg: {theme["pill_bg"]};
-            --card-shadow: {theme["card_shadow"]};
-            --stat-bg: {theme["stat_bg"]};
-            --tab-bg: {theme["tab_bg"]};
-            --tab-selected: {theme["tab_selected"]};
-            --tab-selected-border: {theme["tab_selected_border"]};
-            --input-bg: {theme["input_bg"]};
-            --button-bg: {theme["button_bg"]};
-            --primary-start: {theme["primary_start"]};
-            --primary-end: {theme["primary_end"]};
-            --primary-shadow: {theme["primary_shadow"]};
-            --hero-start: {theme["hero_start"]};
-            --hero-end: {theme["hero_end"]};
-            --hero-orb: {theme["hero_orb"]};
+            --surface: __surface__;
+            --surface-strong: __surface_strong__;
+            --line: __line__;
+            --text: __text__;
+            --muted: __muted__;
+            --accent: __accent__;
+            --accent-deep: __accent_deep__;
+            --olive: __olive__;
+            --gold: __gold__;
+            --pill-border: __pill_border__;
+            --pill-bg: __pill_bg__;
+            --card-shadow: __card_shadow__;
+            --stat-bg: __stat_bg__;
+            --tab-bg: __tab_bg__;
+            --tab-selected: __tab_selected__;
+            --tab-selected-border: __tab_selected_border__;
+            --input-bg: __input_bg__;
+            --button-bg: __button_bg__;
+            --primary-start: __primary_start__;
+            --primary-end: __primary_end__;
+            --primary-shadow: __primary_shadow__;
+            --hero-start: __hero_start__;
+            --hero-end: __hero_end__;
+            --hero-orb: __hero_orb__;
         }
 
         .stApp {
             background:
-                radial-gradient(circle at top left, {theme["bg_left"]}, transparent 30%),
-                radial-gradient(circle at top right, {theme["bg_right"]}, transparent 24%),
-                {theme["bg_gradient"]};
+                radial-gradient(circle at top left, __bg_left__, transparent 30%),
+                radial-gradient(circle at top right, __bg_right__, transparent 24%),
+                __bg_gradient__;
             color: var(--text);
         }
 
@@ -606,9 +605,11 @@ st.markdown(
             border-radius: 18px;
         }
     </style>
-    """,
-    unsafe_allow_html=True,
-)
+    """
+for key, value in theme.items():
+    theme_css = theme_css.replace(f"__{key}__", value)
+
+st.markdown(theme_css, unsafe_allow_html=True)
 
 transcript_stats = get_transcript_stats(st.session_state["final_transcript"])
 

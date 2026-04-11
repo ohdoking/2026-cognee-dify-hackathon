@@ -14,7 +14,10 @@ dependencies = [
     "python-dotenv (>=1.2.2,<2.0.0)",
     "streamlit-mic-recorder (>=0.0.8,<0.0.9)",
     "streamlit (>=1.56.0,<2.0.0)",
-    "openai (>=2.31.0,<3.0.0)"
+    "openai (>=2.31.0,<3.0.0)",
+    "fastapi (>=0.116.1,<0.117.0)",
+    "uvicorn (>=0.35.0,<0.36.0)",
+    "python-multipart (>=0.0.22,<1.0.0)"
 ]
 
 

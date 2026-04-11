@@ -1,47 +1,45 @@
 # BrainSync Auditor
 
-BrainSync Auditor is a Streamlit app built for the 2026 Cognee + Dify hackathon. It turns meeting transcripts or live recordings into compliance-focused recall checks by combining:
+BrainSync Auditor is now structured as a small full-stack app:
 
-- Whisper transcription for audio input
-- Dify workflows for structured quiz generation
-- Cognee-backed project knowledge for conflict and consistency checks
+- `frontend/`: React + Vite UI
+- `api/`: FastAPI backend for transcription and workflow execution
+- `ingest_data.py` / `ingest_rest.py`: Cognee knowledge ingestion scripts
 
-## What It Does
+This split is intentional. The browser handles UI only, while API keys stay server-side in FastAPI for OpenAI Whisper and Dify workflow calls.
 
-- Accepts transcript input from pasted text, live microphone capture, or uploaded `.txt` / audio files
-- Transcribes recorded or uploaded audio with OpenAI Whisper
-- Sends the prepared transcript into a Dify workflow
-- Renders the returned quiz payload as a cleaner audit console instead of a default Streamlit demo layout
+## Product Flow
 
-## UI Refresh
+The application now follows a strict 3-step workflow:
 
-The current app UI was redesigned to feel more intentional and product-like:
+1. `Input`
+   Paste transcript text, record audio in the browser, or upload a text/audio file.
+2. `Execute workflow`
+   The transcript is sent to the FastAPI backend, which calls Dify and returns quiz data.
+3. `Interactive quiz card view`
+   The frontend renders one quiz at a time with answer selection, reveal, and navigation.
 
-- Editorial hero section with clearer hierarchy
-- Switchable light and dark modes with a cleaner non-brown palette
-- Transcript review metrics for words, characters, and lines
-- Persistent audit results in a dedicated right-side review panel
-- Structured quiz cards for questions, options, answers, and insights
+## Stack
 
-## Project Files
+- React 18
+- Vite 5
+- FastAPI
+- OpenAI Whisper transcription
+- Dify workflow execution
+- Cognee ingestion scripts for knowledge preparation
 
-- `app.py`: Main Streamlit UI and Dify / Whisper integration
-- `ingest_data.py`: Cognee ingestion script using the Python SDK
-- `ingest_rest.py`: Cognee ingestion script using REST endpoints
-- `search_test.py`: Search test helper
-- `test_conversation.md`: Sample meeting conversation
+## Project Structure
 
-## Requirements
-
-- Python `3.12` to `3.13`
-- Poetry
-- OpenAI API key
-- Dify API key and workflow endpoint configuration
-- Optional Cognee API configuration for knowledge ingestion
+- `frontend/src/App.jsx`: Main React workflow UI
+- `frontend/src/styles.css`: Frontend styling and theme system
+- `api/main.py`: FastAPI routes for health, transcription, and audit execution
+- `app.py`: Previous Streamlit prototype
+- `ingest_data.py`: Cognee SDK ingestion script
+- `ingest_rest.py`: Cognee REST ingestion script
 
 ## Environment Variables
 
-Create a local `.env` file with the values your environment needs:
+Create a local `.env` file:
 
 ```env
 OPENAI_API_KEY=...
@@ -55,43 +53,64 @@ BASE_URL=...
 
 Notes:
 
-- `WORKFLOW_ID` is read by the app, although the current Dify request uses `/workflows/run`.
-- `BASE_URL` is used by `ingest_rest.py`.
+- `DIFY_URL` defaults to `https://api.dify.ai/v1`.
+- `WORKFLOW_ID` is still present in local config, though the current request uses `/workflows/run`.
+- `COGNEE_API_KEY` and `BASE_URL` are only required for the ingestion/search helper scripts.
 
 ## Install
+
+Python dependencies:
 
 ```bash
 poetry install
 ```
 
-## Run The App
+Frontend dependencies:
 
 ```bash
-poetry run streamlit run app.py
+cd frontend
+npm install
+```
+
+## Run
+
+Start the API:
+
+```bash
+poetry run uvicorn api.main:app --reload --port 8000
+```
+
+Start the frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the Vite app in your browser at `http://localhost:5173`.
+
+## Optional Frontend API Override
+
+If you want the frontend to target a different backend URL, create `frontend/.env.local`:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
 ## Ingest Background Knowledge
 
-Using the Cognee Python SDK:
+Using the Cognee SDK:
 
 ```bash
 poetry run python ingest_data.py
 ```
 
-Using the REST flow:
+Using the REST ingestion flow:
 
 ```bash
 poetry run python ingest_rest.py
 ```
 
-## Suggested Demo Flow
-
-1. Ingest the sample background knowledge into Cognee.
-2. Start the Streamlit app.
-3. Paste a transcript or record a short meeting segment.
-4. Review the transcript and run the audit.
-5. Use the generated quizzes to validate whether the meeting aligned with the project rules.
-
 ## Status
 
-This repo is a hackathon prototype. The core flow works, but it still assumes valid API credentials and a correctly configured Dify workflow response format.
+The Streamlit prototype is retained in the repo as the older version, but the intended path is now the React + FastAPI application.
