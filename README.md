@@ -18,7 +18,7 @@ BrainSync Auditor is a Streamlit app built for the 2026 Cognee + Dify hackathon.
 The current app UI was redesigned to feel more intentional and product-like:
 
 - Editorial hero section with clearer hierarchy
-- Warmer visual system with custom surfaces, spacing, and controls
+- Switchable light and dark modes with a cleaner non-brown palette
 - Transcript review metrics for words, characters, and lines
 - Persistent audit results in a dedicated right-side review panel
 - Structured quiz cards for questions, options, answers, and insights

@@ -177,30 +177,125 @@ def render_result_block(result):
         )
         st.markdown(result)
 
+
+THEMES = {
+    "Light": {
+        "bg_left": "rgba(46, 108, 246, 0.18)",
+        "bg_right": "rgba(15, 123, 108, 0.12)",
+        "bg_gradient": "linear-gradient(180deg, #f5f8fc 0%, #eaf0f8 100%)",
+        "surface": "rgba(255, 255, 255, 0.74)",
+        "surface_strong": "#ffffff",
+        "line": "rgba(19, 32, 51, 0.10)",
+        "text": "#132033",
+        "muted": "#6b778d",
+        "accent": "#2e6cf6",
+        "accent_deep": "#1d4ed8",
+        "olive": "#0f7b6c",
+        "gold": "#d97706",
+        "hero_start": "rgba(255, 255, 255, 0.95)",
+        "hero_end": "rgba(228, 238, 255, 0.90)",
+        "hero_orb": "rgba(46, 108, 246, 0.18)",
+        "pill_border": "rgba(46, 108, 246, 0.14)",
+        "pill_bg": "rgba(255, 255, 255, 0.58)",
+        "card_shadow": "rgba(19, 32, 51, 0.08)",
+        "stat_bg": "rgba(255, 255, 255, 0.86)",
+        "tab_bg": "rgba(255, 255, 255, 0.60)",
+        "tab_selected": "rgba(46, 108, 246, 0.12)",
+        "tab_selected_border": "rgba(46, 108, 246, 0.26)",
+        "input_bg": "rgba(255, 255, 255, 0.95)",
+        "button_bg": "#f8fbff",
+        "primary_start": "#2e6cf6",
+        "primary_end": "#0f7b6c",
+        "primary_shadow": "rgba(46, 108, 246, 0.28)",
+    },
+    "Dark": {
+        "bg_left": "rgba(34, 211, 238, 0.14)",
+        "bg_right": "rgba(14, 165, 233, 0.10)",
+        "bg_gradient": "linear-gradient(180deg, #08101d 0%, #0d1726 100%)",
+        "surface": "rgba(10, 18, 31, 0.82)",
+        "surface_strong": "#101a2b",
+        "line": "rgba(148, 163, 184, 0.14)",
+        "text": "#e6edf7",
+        "muted": "#95a4bb",
+        "accent": "#22d3ee",
+        "accent_deep": "#67e8f9",
+        "olive": "#38bdf8",
+        "gold": "#f59e0b",
+        "hero_start": "rgba(12, 20, 34, 0.92)",
+        "hero_end": "rgba(16, 26, 43, 0.98)",
+        "hero_orb": "rgba(34, 211, 238, 0.16)",
+        "pill_border": "rgba(34, 211, 238, 0.18)",
+        "pill_bg": "rgba(15, 23, 42, 0.52)",
+        "card_shadow": "rgba(2, 6, 23, 0.30)",
+        "stat_bg": "rgba(16, 26, 43, 0.92)",
+        "tab_bg": "rgba(15, 23, 42, 0.72)",
+        "tab_selected": "rgba(34, 211, 238, 0.16)",
+        "tab_selected_border": "rgba(34, 211, 238, 0.30)",
+        "input_bg": "rgba(15, 23, 42, 0.92)",
+        "button_bg": "#0f172a",
+        "primary_start": "#22d3ee",
+        "primary_end": "#2563eb",
+        "primary_shadow": "rgba(37, 99, 235, 0.32)",
+    },
+}
+
 # ==========================================
 # 3. UI 레이아웃 및 컴포넌트
 # ==========================================
+if "final_transcript" not in st.session_state:
+    st.session_state["final_transcript"] = ""
+if "audit_result" not in st.session_state:
+    st.session_state["audit_result"] = None
+if "input_source" not in st.session_state:
+    st.session_state["input_source"] = "Awaiting input"
+if "color_mode" not in st.session_state:
+    st.session_state["color_mode"] = "Light"
+
+theme_cols = st.columns([0.78, 0.22])
+with theme_cols[1]:
+    st.radio(
+        "Mode",
+        options=["Light", "Dark"],
+        horizontal=True,
+        key="color_mode",
+    )
+
+theme = THEMES[st.session_state["color_mode"]]
 st.markdown(
-    """
+    f"""
     <style>
         :root {
-            --bg: #f4efe7;
-            --surface: rgba(255, 251, 245, 0.88);
-            --surface-strong: #fffaf2;
-            --line: rgba(64, 47, 34, 0.12);
-            --text: #241b15;
-            --muted: #6d5c4f;
-            --accent: #b6522f;
-            --accent-deep: #7d2f19;
-            --olive: #435744;
-            --gold: #d7a95b;
+            --surface: {theme["surface"]};
+            --surface-strong: {theme["surface_strong"]};
+            --line: {theme["line"]};
+            --text: {theme["text"]};
+            --muted: {theme["muted"]};
+            --accent: {theme["accent"]};
+            --accent-deep: {theme["accent_deep"]};
+            --olive: {theme["olive"]};
+            --gold: {theme["gold"]};
+            --pill-border: {theme["pill_border"]};
+            --pill-bg: {theme["pill_bg"]};
+            --card-shadow: {theme["card_shadow"]};
+            --stat-bg: {theme["stat_bg"]};
+            --tab-bg: {theme["tab_bg"]};
+            --tab-selected: {theme["tab_selected"]};
+            --tab-selected-border: {theme["tab_selected_border"]};
+            --input-bg: {theme["input_bg"]};
+            --button-bg: {theme["button_bg"]};
+            --primary-start: {theme["primary_start"]};
+            --primary-end: {theme["primary_end"]};
+            --primary-shadow: {theme["primary_shadow"]};
+            --hero-start: {theme["hero_start"]};
+            --hero-end: {theme["hero_end"]};
+            --hero-orb: {theme["hero_orb"]};
         }
 
         .stApp {
             background:
-                radial-gradient(circle at top left, rgba(214, 169, 91, 0.28), transparent 30%),
-                radial-gradient(circle at top right, rgba(182, 82, 47, 0.12), transparent 24%),
-                linear-gradient(180deg, #f8f1e7 0%, #f1e7d9 100%);
+                radial-gradient(circle at top left, {theme["bg_left"]}, transparent 30%),
+                radial-gradient(circle at top right, {theme["bg_right"]}, transparent 24%),
+                {theme["bg_gradient"]};
             color: var(--text);
         }
 
@@ -219,11 +314,11 @@ st.markdown(
         .hero-shell {
             border: 1px solid var(--line);
             background:
-                linear-gradient(140deg, rgba(255, 250, 242, 0.96), rgba(249, 240, 228, 0.86)),
-                #fffaf2;
+                linear-gradient(140deg, var(--hero-start), var(--hero-end)),
+                var(--surface-strong);
             border-radius: 28px;
             padding: 2rem 2rem 1.6rem;
-            box-shadow: 0 24px 60px rgba(64, 47, 34, 0.08);
+            box-shadow: 0 24px 60px var(--card-shadow);
             margin-bottom: 1.4rem;
             position: relative;
             overflow: hidden;
@@ -236,7 +331,7 @@ st.markdown(
             width: 240px;
             height: 240px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(182, 82, 47, 0.18), transparent 68%);
+            background: radial-gradient(circle, var(--hero-orb), transparent 68%);
         }
 
         .hero-eyebrow {
@@ -274,8 +369,8 @@ st.markdown(
         }
 
         .pill {
-            border: 1px solid rgba(67, 87, 68, 0.14);
-            background: rgba(255, 255, 255, 0.52);
+            border: 1px solid var(--pill-border);
+            background: var(--pill-bg);
             padding: 0.7rem 0.95rem;
             border-radius: 18px;
             min-width: 150px;
@@ -301,7 +396,7 @@ st.markdown(
             border-radius: 24px;
             padding: 1.2rem 1.2rem 1.35rem;
             background: var(--surface);
-            box-shadow: 0 16px 40px rgba(64, 47, 34, 0.06);
+            box-shadow: 0 16px 40px var(--card-shadow);
             backdrop-filter: blur(8px);
         }
 
@@ -338,7 +433,7 @@ st.markdown(
             border: 1px solid var(--line);
             border-radius: 18px;
             padding: 0.9rem 1rem;
-            background: rgba(255, 250, 244, 0.78);
+            background: var(--stat-bg);
         }
 
         .stat-card__label {
@@ -441,20 +536,23 @@ st.markdown(
 
         div[data-testid="stTabs"] button[role="tab"] {
             border-radius: 999px;
-            border: 1px solid rgba(64, 47, 34, 0.12);
-            background: rgba(255, 255, 255, 0.48);
+            border: 1px solid var(--line);
+            background: var(--tab-bg);
             padding: 0.55rem 0.95rem;
+            color: var(--muted);
         }
 
         div[data-testid="stTabs"] button[aria-selected="true"] {
-            background: rgba(182, 82, 47, 0.12);
-            border-color: rgba(182, 82, 47, 0.3);
+            background: var(--tab-selected);
+            border-color: var(--tab-selected-border);
             color: var(--accent-deep);
         }
 
         div[data-testid="stTextArea"] textarea {
-            background: rgba(255, 250, 244, 0.92);
+            background: var(--input-bg);
             border-radius: 18px;
+            color: var(--text);
+            border: 1px solid var(--line);
         }
 
         div[data-testid="stFileUploader"] section,
@@ -462,32 +560,55 @@ st.markdown(
             border-radius: 18px;
         }
 
+        div[data-testid="stFileUploader"] section {
+            background: var(--input-bg);
+            border: 1px dashed var(--line);
+        }
+
         div[data-testid="stButton"] button {
             border-radius: 999px;
             min-height: 3rem;
             font-weight: 700;
-            border: 1px solid rgba(64, 47, 34, 0.12);
-            background: #fff7ee;
+            border: 1px solid var(--line);
+            background: var(--button-bg);
             color: var(--text);
         }
 
         div[data-testid="stButton"] button[kind="primary"] {
-            background: linear-gradient(135deg, #b6522f, #8d3a21);
-            color: #fffaf5;
+            background: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+            color: #f8fbff;
             border: none;
-            box-shadow: 0 14px 30px rgba(182, 82, 47, 0.24);
+            box-shadow: 0 14px 30px var(--primary-shadow);
+        }
+
+        div[data-testid="stRadio"] label,
+        div[data-testid="stCaptionContainer"],
+        label[data-testid="stWidgetLabel"] p,
+        .stMarkdown,
+        .stTextArea label,
+        .stFileUploader label {
+            color: var(--text);
+        }
+
+        div[data-testid="stRadio"] div[role="radiogroup"] {
+            justify-content: flex-end;
+            gap: 0.4rem;
+        }
+
+        div[data-testid="stRadio"] div[role="radiogroup"] label {
+            border: 1px solid var(--line);
+            background: var(--tab-bg);
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+        }
+
+        div[data-testid="stAlert"] {
+            border-radius: 18px;
         }
     </style>
     """,
     unsafe_allow_html=True,
 )
-
-if "final_transcript" not in st.session_state:
-    st.session_state["final_transcript"] = ""
-if "audit_result" not in st.session_state:
-    st.session_state["audit_result"] = None
-if "input_source" not in st.session_state:
-    st.session_state["input_source"] = "Awaiting input"
 
 transcript_stats = get_transcript_stats(st.session_state["final_transcript"])
 
