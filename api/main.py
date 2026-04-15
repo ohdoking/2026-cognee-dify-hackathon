@@ -28,6 +28,7 @@ from api.services.cognee import (
     ingest_transcript_to_cognee,
     is_cognee_configured,
 )
+from api.v2.router import router as v2_router
 
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
@@ -43,6 +44,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(v2_router)
 
 def parse_dify_result(raw_result):
     if isinstance(raw_result, str):

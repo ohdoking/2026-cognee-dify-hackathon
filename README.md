@@ -1,85 +1,185 @@
-# Misstery
+# BrainSync Auditor
 
-Misstery is an AI-powered verification service that helps users catch missed information, hidden gaps, and overlooked context before those misses turn into mistakes.
+BrainSync Auditor is a meeting-memory verification product.
 
-Misstery is structured as a small full-stack app:
+The goal is simple:
+
+- capture what was said
+- verify what was actually remembered
+- prevent soft approvals and memory drift from becoming execution mistakes
+
+This repository now contains two parallel implementation paths:
+
+- `v1`: web app flow with React + FastAPI, originally built around Dify + Cognee
+- `v2`: new hybrid iOS-oriented flow with **Cognee-only backend orchestration** and **local Gemma quiz generation**
+
+The old code is kept. The new code lives under `/api/v2/` and `ios/`.
+
+---
+
+## Current Architecture
+
+### Web / v1
 
 - `frontend/`: React + Vite UI
-- `api/`: FastAPI backend for transcription and workflow execution
-- `ingest_data.py` / `ingest_rest.py`: Cognee knowledge ingestion scripts
+- `api/`: FastAPI backend
+- workflow-based quiz generation
+- Cognee-backed feedback and graph/fallback graph rendering
 
-This split is intentional. The browser handles UI only, while API keys stay server-side in FastAPI for OpenAI Whisper and Dify workflow calls.
+### Hybrid iOS / v2
 
-## Product Flow
+- iPhone records or imports meeting audio
+- FastAPI creates transcript
+- FastAPI syncs/searches Cognee Cloud
+- iPhone generates quiz locally with Gemma
+- FastAPI returns Cognee-backed feedback after quiz completion
 
-The application now follows a strict 3-step workflow:
+This hybrid split is intentional:
 
-1. `Input`
-   Paste transcript text, record audio in the browser, or upload a text/audio file.
-2. `Execute workflow`
-   The transcript is sent to the FastAPI backend, which calls Dify and returns quiz data.
-3. `Interactive quiz and review`
-   The frontend renders one quiz at a time with answer selection, reveal, navigation, and a final review stage with expandable feedback cards.
+- local device handles the private/on-device quiz generation step
+- backend handles Cognee Cloud access and hides credentials
 
-## Current UX
+---
 
-The current frontend includes:
+## v2 Product Flow
 
-- input stage for text, audio upload, and live recording
-- explicit workflow loading state while the Dify response is pending
-- interactive quiz cards with answer reveal
-- final overview screen showing:
-  - correct, wrong, answered, and unanswered totals
-  - overall feedback on alignment risk
-  - a checklist for what to remember next time
-  - expandable review cards per question
+The new `v2` flow is:
 
-Each review card shows:
+1. User taps a button in the iOS app and creates a transcript
+2. Transcript is synced to Cognee Cloud and relevant context is searched
+3. Cognee context is used to prepare an analysis package
+4. Gemma 4 runs locally on the iPhone and creates quiz questions
+5. After the user solves the quiz, the backend returns feedback and “what to remember” guidance
 
-- your answer
-- correct answer
-- why it matters
-- feedback
-- what to remember next time
-- communication risk
-- revisit-card action
+The v2 flow removes Dify from the quiz-generation pipeline.
 
-## Stack
+---
 
-- React 18
-- Vite 5
-- FastAPI
-- OpenAI Whisper transcription
-- Dify workflow execution
-- Cognee ingestion scripts for knowledge preparation
-- React-based quiz review and post-quiz coaching
+## API Layout
 
-## Planned Cognee Integration
+### Existing routes
 
-The next backend iteration is to connect the quiz feedback stage directly to Cognee through REST APIs instead of the Python SDK.
+The existing API remains in:
 
-Target direction:
+- `api/main.py`
+- `api/services/cognee.py`
 
-- ingest new meeting context into Cognee through REST
-- trigger graph updates through REST
-- query relevant policy context during the quiz feedback session
-- show supporting evidence and memory guidance in the final review screen
+### New v2 routes
 
-Intended use:
+Implemented in:
 
-- Dify generates the quiz structure
-- Cognee provides relevant context, policy grounding, and explanation support
+- `api/v2/router.py`
+- `api/v2/service.py`
+- `api/v2/schemas.py`
 
-## Project Structure
+Routes:
 
-- `frontend/src/App.jsx`: Main React workflow UI
-- `frontend/src/styles.css`: Frontend styling and theme system
-- `api/main.py`: FastAPI routes for health, transcription, and audit execution
-- `app.py`: Previous Streamlit prototype
-- `ingest_data.py`: Cognee SDK ingestion script
-- `ingest_rest.py`: Cognee REST ingestion script
-- `test_conversation.md`: Demo transcripts and expected outcomes
-- `PRESENTATION.md`: Presentation script and slide outline
+- `POST /api/v2/transcribe`
+- `POST /api/v2/session/prepare`
+- `POST /api/v2/session/feedback`
+
+### `POST /api/v2/transcribe`
+
+Creates a transcript from uploaded audio.
+
+### `POST /api/v2/session/prepare`
+
+Takes a transcript and:
+
+- ingests it into Cognee
+- searches Cognee for relevant context
+- returns:
+  - transcript
+  - dataset name
+  - retrieved contexts
+  - analysis query
+  - a Gemma-ready prompt package for local generation
+
+### `POST /api/v2/session/feedback`
+
+Takes:
+
+- transcript
+- generated quiz list
+- user answers
+
+Returns:
+
+- Cognee-backed review items
+- evidence per quiz item
+- remember highlights
+
+---
+
+## Cognee Graph Handling
+
+BrainSync now handles graph rendering this way:
+
+- first try to use `dataset_id` from Cognee search results
+- fetch native dataset graph if available
+- filter that graph for relevant nodes/edges
+- if native graph is unavailable, build a **fallback graph** from:
+  - question
+  - user answer
+  - correct answer
+  - insight
+  - evidence contexts
+
+So the frontend always renders a graph through React Flow.
+
+It is either:
+
+- native Cognee graph
+- or a BrainSync fallback graph built from Cognee search evidence
+
+---
+
+## iOS App Scaffold
+
+The iOS source scaffold lives in:
+
+- `ios/BrainSyncV2/`
+
+Files:
+
+- `BrainSyncV2App.swift`
+- `ContentView.swift`
+- `BrainSyncViewModel.swift`
+- `APIClient.swift`
+- `Models.swift`
+- `LocalGemmaQuizGenerator.swift`
+
+Supporting notes:
+
+- `ios/README.md`
+- `ios/BrainSyncV2/Info.plist`
+
+Important:
+
+- this repo currently includes a **SwiftUI source scaffold**
+- it does **not** yet include a full generated `.xcodeproj`
+- the local Gemma integration is abstracted behind a protocol so you can replace the preview generator with a real on-device runtime bridge
+
+---
+
+## Gemma 4 in v2
+
+The intended v2 model flow is:
+
+- Cognee Cloud for retrieval and grounding
+- Gemma 4 on-device on iPhone for local quiz generation
+
+Current implementation detail:
+
+- `LocalGemmaQuizGenerating` defines the local quiz generator interface
+- `PreviewGemmaQuizGenerator` is currently a placeholder/demo implementation
+- the backend returns a `gemmaPrompt` package from `/api/v2/session/prepare`
+
+This means the missing step is **not** prompt construction.
+
+The missing step is wiring that prompt package into your actual local Gemma runtime on iPhone.
+
+---
 
 ## Environment Variables
 
@@ -87,19 +187,26 @@ Create a local `.env` file:
 
 ```env
 OPENAI_API_KEY=...
+
 DIFY_API_KEY=...
 DIFY_URL=https://api.dify.ai/v1
-WORKFLOW_ID=...
 
 COGNEE_API_KEY=...
 BASE_URL=...
+COGNEE_DATASET_NAME=Project_Aurora_Knowledge
+
+GEMMA_BASE_URL=http://127.0.0.1:11434
+GEMMA_MODEL=gemma4
 ```
 
 Notes:
 
-- `DIFY_URL` defaults to `https://api.dify.ai/v1`.
-- `WORKFLOW_ID` is still present in local config, though the current request uses `/workflows/run`.
-- `COGNEE_API_KEY` and `BASE_URL` are currently used by the ingestion/search helper scripts and are intended to be reused for the REST-based quiz feedback integration.
+- `OPENAI_API_KEY` is used for transcription in the current backend
+- `DIFY_*` is still needed for the older v1 path
+- `COGNEE_*` is required for v1 feedback and the new v2 hybrid path
+- `GEMMA_*` is reserved for future local/server Gemma wiring
+
+---
 
 ## Install
 
@@ -116,82 +223,93 @@ cd frontend
 npm install
 ```
 
-## Run
-
-Start the API:
-
-```bash
-poetry run uvicorn api.main:app --reload --port 8000
-```
-
-Start the frontend:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Open the Vite app in your browser at `http://localhost:5173`.
-
-## Optional Frontend API Override
-
-If you want the frontend to target a different backend URL, create `frontend/.env.local`:
-
-```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
-```
-
-## Ingest Background Knowledge
-
-Using the Cognee SDK:
-
-```bash
-poetry run python ingest_data.py
-```
-
-Using the REST ingestion flow:
-
-```bash
-poetry run python ingest_rest.py
-```
-
-## Demo Assets
-
-For presentation and demo preparation:
-
-- `test_conversation.md` contains multiple meeting scenarios with:
-  - transcript
-  - actual result
-  - expected result
-  - what Misstery should flag
-- `PRESENTATION.md` contains a presentation-ready explanation of the service, architecture, workflow, and demo flow
-- `slides/slides.md` is a Slidev deck for presenting to an audience in the browser
-
-## Presentation Deck
-
-The repo includes a Slidev presentation so you can present directly from Markdown.
-
-Install slide dependencies:
+Slide deck dependencies:
 
 ```bash
 cd slides
 npm install
 ```
 
-Run the presentation locally:
+---
+
+## Run
+
+### Backend
 
 ```bash
-cd slides
+poetry run uvicorn api.main:app --reload --port 8000
+```
+
+### Frontend
+
+```bash
+cd frontend
 npm run dev
 ```
 
-Build static presentation assets:
+The web app uses the existing v1 React experience.
 
-```bash
-cd slides
-npm run build
-```
+---
 
-## Status
+## iOS Setup
 
-The Streamlit prototype is retained in the repo as the older version, but the intended path is now the React + FastAPI application with Cognee REST-backed feedback in the post-quiz review stage.
+1. Open Xcode
+2. Create a new iOS App project named `BrainSyncV2`
+3. Copy the files from `ios/BrainSyncV2/` into the new project
+4. Use `ios/BrainSyncV2/Info.plist` as your starting plist
+5. Point the app to your backend base URL in `APIClient.swift`
+
+The current iOS scaffold is enough to demonstrate:
+
+- transcript text flow
+- Cognee session preparation
+- quiz rendering
+- feedback rendering
+
+It still needs a real local Gemma runtime bridge for production on-device generation.
+
+---
+
+## Demo Assets
+
+Demo assets are stored in:
+
+- `demo_assets/`
+- `test_data/`
+- `PRESENTATION.md`
+- `slides/slides.md`
+
+Useful files:
+
+- `demo_assets/berlin_hackathon_conflict.wav`
+- `demo_assets/berlin_hackathon_conflict_script.txt`
+- `test_data/test_conversation_v3.md`
+- `test_data/berlin_hackathon_demo_test_cases.json`
+
+---
+
+## Verification Status
+
+Verified in this repository:
+
+- Python compile for the current backend modules
+- frontend production build
+- route-level checks for `/api/v2/*`
+
+Not fully verified yet:
+
+- a real local Gemma 4 runtime integration inside the custom iOS app
+- a generated and buildable Xcode project file in this repo
+
+---
+
+## Repo Structure
+
+- `api/main.py`: existing API entrypoint
+- `api/services/cognee.py`: Cognee REST integration and graph/fallback graph logic
+- `api/v2/`: new Cognee-only hybrid flow for iOS
+- `frontend/`: current web product
+- `ios/`: new SwiftUI app scaffold for v2
+- `slides/`: Slidev presentation deck
+- `demo_assets/`: audio and script assets for demo
+- `test_data/`: presentation/demo test scenarios
