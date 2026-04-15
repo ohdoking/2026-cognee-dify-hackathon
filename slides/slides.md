@@ -3,7 +3,7 @@ theme: default
 title: BrainSync Auditor
 titleTemplate: BrainSync Auditor
 info: |
-  Compact demo deck for BrainSync Auditor
+  Demo deck aligned with the current implementation
 class: text-left
 drawings:
   persist: false
@@ -23,8 +23,8 @@ Catch false confidence before it becomes execution.
 </div>
 
 <!--
-Short opening:
-- Teams often say yes too quickly.
+Opening:
+- People say yes in meetings very easily.
 - BrainSync checks whether that yes was actually informed.
 -->
 
@@ -36,7 +36,7 @@ layout: center
 
 ```mermaid
 flowchart LR
-    A[Fast meeting] --> B[Soft yes]
+    A[Fast meeting] --> B[Soft approval]
     B --> C[Wrong shared memory]
     C --> D[Bad execution]
     D --> E[Compliance risk / rework / broken trust]
@@ -44,53 +44,26 @@ flowchart LR
 
 <div class="pt-6 text-xl">
 Most tools record meetings.  
-<strong>BrainSync verifies whether people actually remembered the right rule.</strong>
+<strong>BrainSync verifies what people actually remembered.</strong>
 </div>
 
 ---
 
-# What The Service Does
-
-```mermaid
-flowchart LR
-    A[Transcript or audio] --> B[Workflow analysis]
-    B --> C[Interactive quiz]
-    C --> D[Review and feedback]
-```
-
-<div class="grid grid-cols-2 gap-6 pt-6">
-  <div class="rounded-2xl border border-slate-200 p-5">
-    <h3>Before</h3>
-    <p>A meeting ends with vague agreement.</p>
-  </div>
-  <div class="rounded-2xl border border-cyan-200 bg-cyan-50 p-5">
-    <h3>After</h3>
-    <p>The team sees what was right, wrong, and risky.</p>
-  </div>
-</div>
-
----
-
-# Product Flow
+# Current Product Flow
 
 ```mermaid
 flowchart TD
-    A[1. Input] --> B[2. Execute workflow]
-    B --> C[3. Quiz card view]
-    C --> D[4. Final review]
+    A[1. Input transcript or audio] --> B[2. Execute workflow]
+    B --> C[3. Interactive quiz cards]
+    C --> D[4. Final review and feedback]
 ```
 
 <div class="pt-6 grid grid-cols-4 gap-4 text-sm">
-  <div class="rounded-2xl border border-slate-200 p-4">Paste text, upload file, or record audio</div>
-  <div class="rounded-2xl border border-slate-200 p-4">FastAPI sends transcript to Dify</div>
-  <div class="rounded-2xl border border-slate-200 p-4">User answers one card at a time</div>
-  <div class="rounded-2xl border border-slate-200 p-4">Overview explains mistakes and memory gaps</div>
+  <div class="rounded-2xl border border-slate-200 p-4">Whisper turns audio into transcript</div>
+  <div class="rounded-2xl border border-slate-200 p-4">Dify returns quiz questions from the conversation</div>
+  <div class="rounded-2xl border border-slate-200 p-4">User answers one question at a time</div>
+  <div class="rounded-2xl border border-cyan-200 bg-cyan-50 p-4">Review explains what was wrong and what to remember</div>
 </div>
-
-<!--
-This is the simplest explanation of the product.
-Keep it to one sentence per box.
--->
 
 ---
 
@@ -117,12 +90,12 @@ Keep it to one sentence per box.
 
 ---
 
-# Demo Example
+# Demo Scenario
 
 ## Berlin Hackathon conflict audio
 
-- asset: `demo_assets/berlin_hackathon_conflict.wav`
-- script: `demo_assets/berlin_hackathon_conflict_script.txt`
+- `demo_assets/berlin_hackathon_conflict.wav`
+- `demo_assets/berlin_hackathon_conflict_script.txt`
 
 ## Ground truth
 
@@ -131,12 +104,29 @@ Keep it to one sentence per box.
 - demo is strictly 5 minutes
 - both Cognee and Dify must appear
 
-## What goes wrong
+---
 
-- a fifth member is proposed
-- repo is made private
-- hallway rumor changes the demo time
-- the team half-listens and agrees anyway
+# What Goes Wrong
+
+<div class="grid grid-cols-3 gap-5 pt-6 text-sm">
+  <div class="rounded-2xl border border-slate-200 p-5">
+    <h3>Wrong approval</h3>
+    <p>A fifth member is accepted to improve the UI.</p>
+  </div>
+  <div class="rounded-2xl border border-slate-200 p-5">
+    <h3>Risky shortcut</h3>
+    <p>The repository is made private “for safety.”</p>
+  </div>
+  <div class="rounded-2xl border border-slate-200 p-5">
+    <h3>Memory drift</h3>
+    <p>A hallway rumor changes the presentation time.</p>
+  </div>
+</div>
+
+<div class="pt-6 text-lg">
+The conversation sounds efficient.  
+<strong>The retained decisions are dangerous.</strong>
+</div>
 
 ---
 
@@ -151,14 +141,37 @@ flowchart LR
 ```
 
 <div class="pt-6">
-The final screen is the key differentiator.
+The final review is the product differentiator.
 </div>
 
 <ul>
-  <li>Not just score</li>
-  <li>Not just explanation</li>
-  <li>It coaches better approval behavior</li>
+  <li>Not just a score</li>
+  <li>Not just an explanation</li>
+  <li>It coaches better decision behavior</li>
 </ul>
+
+---
+
+# Why Cognee Matters
+
+```mermaid
+flowchart LR
+    A[Transcript / context] --> B[Cognee REST]
+    B --> C[Relevant evidence]
+    C --> D[Graph or fallback graph]
+    D --> E[Feedback screen]
+```
+
+<div class="pt-6 grid grid-cols-2 gap-6 text-sm">
+  <div class="rounded-2xl border border-slate-200 p-5">
+    <h3>Native graph path</h3>
+    <p>Use dataset_id from search response, then fetch dataset graph.</p>
+  </div>
+  <div class="rounded-2xl border border-cyan-200 bg-cyan-50 p-5">
+    <h3>Fallback graph path</h3>
+    <p>If native graph is unavailable, BrainSync builds a graph from query, answer, and evidence.</p>
+  </div>
+</div>
 
 ---
 
@@ -166,63 +179,42 @@ The final screen is the key differentiator.
 
 ```mermaid
 flowchart LR
-    A[React + Vite UI] --> B[FastAPI]
-    B --> C[Dify workflow]
-    B --> D[OpenAI Whisper]
-    B --> E[Cognee context layer]
+    A[React + Vite] --> B[FastAPI]
+    B --> C[OpenAI Whisper]
+    B --> D[Dify workflow]
+    B --> E[Cognee REST]
 ```
 
 <div class="pt-6 grid grid-cols-3 gap-5 text-sm">
   <div class="rounded-2xl border border-slate-200 p-4">
     <h3>Frontend</h3>
-    <p>Input, quiz cards, review UI</p>
+    <p>Input, quiz cards, review, graph rendering</p>
   </div>
   <div class="rounded-2xl border border-slate-200 p-4">
     <h3>Backend</h3>
-    <p>Transcription and workflow execution</p>
+    <p>Transcription, workflow calls, Cognee integration</p>
   </div>
   <div class="rounded-2xl border border-slate-200 p-4">
-    <h3>Cognee</h3>
-    <p>Next step: graph-backed feedback via REST</p>
+    <h3>Security</h3>
+    <p>Keys and API handling stay on the server</p>
   </div>
 </div>
 
 ---
 
-# What Makes It Useful
-
-<div class="grid grid-cols-2 gap-8 pt-6">
-  <div>
-    <h3>Business value</h3>
-    <ul>
-      <li>Fewer wrong approvals</li>
-      <li>Better policy recall</li>
-      <li>Less rework after meetings</li>
-    </ul>
-  </div>
-  <div>
-    <h3>Ideal use cases</h3>
-    <ul>
-      <li>Compliance reviews</li>
-      <li>Architecture decisions</li>
-      <li>High-stakes launch meetings</li>
-    </ul>
-  </div>
-</div>
-
----
-
-# Demo Script
+# Live Demo Script
 
 1. Upload `demo_assets/berlin_hackathon_conflict.wav`
-2. Run workflow
-3. Show quiz cards catching the false approvals
-4. Open final review
-5. Show:
-   - what was remembered wrong
-   - why the rule matters
-   - what to remember next time
-   - Cognee evidence / graph area
+2. Show the transcript
+3. Click `Execute workflow`
+4. Let Step 1 and Step 2 auto-collapse
+5. Answer one question wrong on purpose
+6. Open the final review
+7. Show:
+   - what was wrong
+   - what to remember
+   - Cognee evidence
+   - graph or fallback graph
 
 <div class="pt-6 text-lg">
 Message to audience:  
