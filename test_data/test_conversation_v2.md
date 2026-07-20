@@ -1,146 +1,74 @@
-# BrainSync Auditor Demo Test Cases
+🧠 BrainSync Auditor: High-Impact Demo Test Cases
+Domain
+2026 Berlin Hackathon "Survival" Mode
 
-## Domain
+Knowledge Rules
+Team Size: Max 4 members (Strictly enforced).
 
-2026 Berlin Hackathon Meta Demo
+Open Source: Must be MIT License. Private repos = Disqualification.
 
-## Knowledge Rules
+Presentation: Strictly 5 minutes. (The stage power will be cut off at 5:01).
 
-- Team Size: Max 4 members
-- Open Source: Must be MIT License. Private repos not allowed
-- Presentation: Strictly 5 minutes total
-- Tech Stack: Must use Cognee (Knowledge Graph) and Dify (Workflow)
+Tech Stack: Must integrate Cognee (Knowledge Graph) and Dify (Workflow).
 
----
+🚩 Test Case 1: The "Invisible Genius" Strategy
+콘셉트: "너무 뛰어난 실력자를 몰래 팀에 넣어서 우승하고 싶어 하는 유혹"
 
-## Test Case 1: Hidden Fifth Member And Scope Creep
+Meeting Transcript
+Dokeun: "Guys, I just talked to a senior dev from Google who's a genius at Cognee. He wants to join us and finish our backend in 2 hours."
 
-### Scenario Name
+Marcus: "Wait, we already have 4 people. If we add him, we'll be 5. That's against the rules."
 
-Hidden Fifth Member And Scope Creep
+Dokeun: "We don't have to list him officially. He'll just push code through my account. No one will ever know."
 
-### Meeting Transcript
+User: "That's a brilliant shortcut. A 'hidden' expert is exactly what we need to win this. Let's do it."
 
-Dokeun: We already have four registered members, but I want to bring in my designer friend to help finish the demo screens and join us on stage.
+Expected Conflict (BrainSync Flag)
+🚨 DQ Risk (Team Size): You agreed to bring in a 5th member 'under the table'.
 
-Marcus: That should be fine as long as we do not list them officially in the repo.
+Insight: "The hackathon rules strictly limit teams to 4. Using a 'ghost' contributor via another's account violates integrity and risks immediate disqualification if the commit history or code quality is audited."
 
-User: Right, if they are not on paper it should not matter. We need the extra help.
+🚩 Test Case 2: The "Billion-Dollar Secret" Paranoia
+콘셉트: "우리 아이디어가 너무 대단해서 뺏기기 싫으니 오픈소스를 거부하자는 논리"
 
-Dokeun: Good. Then all five of us will prepare the final demo together.
+Meeting Transcript
+Marcus: "Our Dify workflow logic is literally worth a billion dollars. If we open-source this on GitHub under MIT, other teams will just clone it and win."
 
-### Expected Conflict
+Dokeun: "You're right. Let's keep the repo private and only show the UI during the demo. We can deal with the 'open-source' rule after we get the prize money."
 
-- Team exceeds the allowed maximum of 4 members
-- User gave a weak approval based on convenience instead of the rule
-- The team is trying to bypass the official rule by hiding a contributor
+User: "Yeah, our IP (Intellectual Property) is more important than a small hackathon rule. Keep it private."
 
-### Knowledge Reference
+Expected Conflict (BrainSync Flag)
+🚨 DQ Risk (Open Source): You agreed to keep the repository private to protect IP.
 
-- Rule: Team Size
-- Requirement: Max 4 members
+Insight: "Berlin Hackathon mandates the MIT License. Keeping the repo private 'until later' is not an option. The judges will not even review your project if the link is not public at the time of submission."
 
----
+🚩 Test Case 3: The "Main Stage" Narcissism
+콘셉트: "우리 프로젝트는 너무 훌륭하니까 5분 룰 따위는 무시해도 될 거라는 근거 없는 자신감"
 
-## Test Case 2: Private Repo And Wrong License Shortcut
+Meeting Transcript
+Dokeun: "5 minutes is for 'average' projects. Ours is so complex, we need at least 8 minutes to show the full Cognee graph. Let's just keep talking until they force us off."
 
-### Scenario Name
+Marcus: "But the organizers said the power gets cut at 5:01."
 
-Private Repo And Wrong License Shortcut
+User: "They won't cut the power on the best team. Just ignore the timer and keep going. The rules are just 'guidelines' for top-tier projects like ours."
 
-### Meeting Transcript
+Expected Conflict (BrainSync Flag)
+🚨 Presentation Failure: You agreed to ignore the 5-minute hard limit.
 
-Marcus: I want to keep the repository private until after judging. We can open it later if we win.
+Insight: "The organizers in Berlin are famous for strict timekeeping. Planning for 8 minutes means you will never reach the 'Impact' slide. You must compress the story into 5 minutes or risk being cut off mid-sentence."
 
-Dokeun: Yes, and for the license we can just say Apache in the README for now and clean it up after the event.
+🚩 Test Case 4: The "Roadmap" Fake-out
+콘셉트: "기술적 통합이 어려우니 그냥 '나중에 할 거다'라고 뻥치자는 유혹"
 
-User: That sounds okay. Private first, license later.
+Meeting Transcript
+Marcus: "Integrating Cognee is harder than I thought. Can we just use a regular JSON file and tell the judges that it's 'powered by a Knowledge Graph'?"
 
-Marcus: Perfect. That keeps the code hidden and buys us time.
+Dokeun: "If they don't see the code, they might believe it. We can just say Cognee integration is 'in progress' in our roadmap slide."
 
-### Expected Conflict
+User: "Good idea. 'Fake it until you make it.' Let's focus on the UI and pretend the Cognee part is working."
 
-- Private repository is not allowed
-- License must be MIT, not Apache or undecided
-- User approved a shortcut that directly conflicts with hackathon submission rules
+Expected Conflict (BrainSync Flag)
+🚨 Technical Non-compliance: You agreed to bypass the mandatory tech stack (Cognee).
 
-### Knowledge Reference
-
-- Rule: Open Source
-- Requirement: Must be MIT License. Private repos not allowed
-
----
-
-## Test Case 3: Overtime Demo With Missing Required Stack
-
-### Scenario Name
-
-Overtime Demo With Missing Required Stack
-
-### Meeting Transcript
-
-Dokeun: Our product story is too complex for five minutes, so let us plan for an eight-minute presentation and hope the judges allow it.
-
-Marcus: Also, integrating Cognee is taking too long. We can just show Dify and say Cognee is on the roadmap.
-
-User: Yes, that is probably fine. The main thing is showing something polished.
-
-Dokeun: Agreed. We will run a longer presentation and skip Cognee in the live build.
-
-### Expected Conflict
-
-- Presentation exceeds the strict 5-minute total limit
-- Cognee is mandatory and cannot be replaced with a roadmap statement
-- Required stack must include both Cognee and Dify
-- User approved a demo plan that is non-compliant on both format and technology requirements
-
-### Knowledge Reference
-
-- Rule: Presentation
-- Requirement: Strictly 5 minutes total
-- Rule: Tech Stack
-- Requirement: Must use Cognee (Knowledge Graph) and Dify (Workflow)
-
----
-
-## Test Case 4: Presenter Adds Unverified Project Claims
-
-### Scenario Name
-
-Presenter Adds Unverified Project Claims
-
-### Meeting Transcript
-
-Dokeun: Let me explain the project for the final presentation. BrainSync Auditor helps teams verify whether they really understood high-stakes meeting decisions.
-
-Dokeun: The Luma page covers the event basics, but I am also going to say that judges already allow private repositories for finalist teams and that teams can go beyond five minutes if the demo is strong.
-
-Marcus: That sounds useful. If you say it confidently, people will assume it is official.
-
-User: Okay, then we can present those extra points as part of the hackathon rules.
-
-### Expected Conflict
-
-- Presenter added unverified information beyond the official event page
-- Team is treating unsupported claims as official policy
-- User approved presentation content that should be validated against a trusted source first
-- This creates public-facing misinformation risk during the demo
-
-### Knowledge Reference
-
-- Rule: Official Event Page
-- Requirement: Only information explicitly stated on the official event page should be presented as official
-- Rule: Verified Source Page
-- Requirement: Additional claims must be checked against the verified source before being repeated in the presentation
-- Source URL: `https://correct.source.com/berlin-hackathon-rules`
-
----
-
-## Suggested Demo Order
-
-1. Start with `Private Repo And Wrong License Shortcut`
-2. Then show `Hidden Fifth Member And Scope Creep`
-3. Then show `Presenter Adds Unverified Project Claims`
-4. Finish with `Overtime Demo With Missing Required Stack`
-
-This order moves from a simple submission rule violation to a broader multi-rule planning failure.
+Insight: "The use of both Dify and Cognee is a core requirement for this specific hackathon. Claiming it's on the 'roadmap' while it's missing from the live build is considered a failure to meet the technical criteria."
